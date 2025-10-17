@@ -1,6 +1,6 @@
 ﻿namespace Application.Dto.Request.Filters;
 
-public class UserFilters : BaseFilter 
+public class UserFilters : BaseFilter
 {
     public DateTime? DateOfBirthFrom { get; set; }
     public DateTime? DateOfBirthTo { get; set; }

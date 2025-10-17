@@ -1,7 +1,7 @@
 ﻿using Application.Dto.Request;
 using Application.Dto.Request.Filters;
+using Application.Dto.Response;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -19,7 +19,7 @@ namespace Api.Controllers
         [ProducesResponseType(500)]
         [EndpointDescription("Получение списка всех пользователей системы с поддержкой пагинации и фильтрации.")]
         [EndpointSummary("Получить список пользователей")]
-        public IActionResult GetUsers(UserFilters filters)
+        public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsers(UserFilters filters)
         {
             // Get all users (admin only)
             return Ok();

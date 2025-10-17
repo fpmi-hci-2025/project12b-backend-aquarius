@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Application.Dto.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -17,7 +17,7 @@ namespace Api.Controllers
         [ProducesResponseType(500)]
         [EndpointDescription("Получение списка избранного текущего пользователя. Возвращает все книги, добавленные в вишлист.")]
         [EndpointSummary("Получить список избранного")]
-        public IActionResult GetWishlist()
+        public async Task<ActionResult<IEnumerable<WishListItemResponse>>> GetWishlist()
         {
             // Get user's wishlist
             return Ok();

@@ -1,6 +1,6 @@
 ﻿using Application.Dto.Request.Filters;
+using Application.Dto.Response;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -18,7 +18,7 @@ namespace Api.Controllers
         [ProducesResponseType(500)]
         [EndpointDescription("Генерация отчета по продажам за указанный период. Поддерживает фильтрацию по издателям, жанрам и авторам.")]
         [EndpointSummary("Получить отчет по продажам")]
-        public IActionResult GetSalesReport([FromQuery] ReportFilters filters)
+        public async Task<ActionResult<SalesReportResponse>> GetSalesReport([FromQuery] ReportFilters filters)
         {
             // Generate sales reports (admin only)
             return Ok();
