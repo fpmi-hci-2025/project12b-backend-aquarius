@@ -1,6 +1,6 @@
 ﻿using Application.Dto.Request;
+using Application.Dto.Response;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -17,7 +17,7 @@ namespace Api.Controllers
         [ProducesResponseType(500)]
         [EndpointDescription("Получает все заказы для текущего авторизованного пользователя. Обычные пользователи видят только свои заказы, администраторы видят все заказы.")]
         [EndpointSummary("Получить заказы пользователя")]
-        public IActionResult GetUserOrders()
+        public async Task<ActionResult<IEnumerable<OrderResponse>>> GetUserOrders()
         {
             // Get user's orders
             return Ok();
@@ -31,7 +31,7 @@ namespace Api.Controllers
         [ProducesResponseType(500)]
         [EndpointDescription("Получает все заказы в системе с поддержкой пагинации и фильтрации. Доступно только для администраторов.")]
         [EndpointSummary("Получить все заказы")]
-        public IActionResult GetAllOrders()
+        public async Task<ActionResult<IEnumerable<OrderResponse>>> GetAllOrders()
         {
             // Get all customer orders (admin only)
             return Ok();
@@ -46,7 +46,7 @@ namespace Api.Controllers
         [ProducesResponseType(500)]
         [EndpointDescription("Получает текущий статус конкретного заказа. Пользователи могут проверять статус только своих заказов, администраторы - любых заказов.")]
         [EndpointSummary("Получить статус заказа")]
-        public IActionResult GetOrderStatus([FromRoute] Guid orderId)
+        public async Task<ActionResult<string>> GetOrderStatus([FromRoute] Guid orderId)
         {
             // Check order status
             return Ok();

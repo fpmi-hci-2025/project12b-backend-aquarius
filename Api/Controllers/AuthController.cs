@@ -1,4 +1,5 @@
 ﻿using Application.Dto.Request;
+using Application.Dto.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +22,7 @@ public class AuthController : ControllerBase
     [ProducesResponseType(500)]
     [EndpointDescription("Регистрация нового пользователя в системе. Создает учетную запись пользователя с ролью 'User'. Возвращает JWT токены.")]
     [EndpointSummary("Регистрация нового пользователя")]
-    public async Task<ActionResult> SignUp([FromBody] RegisterRequest registerDto)
+    public async Task<ActionResult<TokensResponse>> SignUp([FromBody] RegisterRequest registerDto)
     {
         return Ok();
     }
@@ -33,7 +34,7 @@ public class AuthController : ControllerBase
     [ProducesResponseType(500)]
     [EndpointDescription("Аутентификация пользователя в системе. Проверяет учетные данные и возвращает JWT токены.")]
     [EndpointSummary("Вход в систему")]
-    public async Task<ActionResult> SignIn([FromBody] LoginRequest loginDto)
+    public async Task<ActionResult<TokensResponse>> SignIn([FromBody] LoginRequest loginDto)
     {
         return Ok();
     }
@@ -41,9 +42,9 @@ public class AuthController : ControllerBase
     [Authorize]
     [HttpPost("sign-out")]
     [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
     [ProducesResponseType(401)]
     [ProducesResponseType(403)]
-    [ProducesResponseType(404)]
     [ProducesResponseType(500)]
     [EndpointDescription("Выход пользователя из системы. Деактивирует текущие токены.")]
     [EndpointSummary("Выход из системы")]
@@ -60,7 +61,7 @@ public class AuthController : ControllerBase
     [ProducesResponseType(500)]
     [EndpointDescription("Обновление JWT токенов. Использует валидный refresh token для получения новой пары access и refresh токенов.")]
     [EndpointSummary("Обновление токенов")]
-    public async Task<ActionResult> Refresh([FromBody] RefreshRequest tokensToRefresh)
+    public async Task<ActionResult<TokensResponse>> Refresh([FromBody] RefreshRequest tokensToRefresh)
     {
         return Ok();
     }

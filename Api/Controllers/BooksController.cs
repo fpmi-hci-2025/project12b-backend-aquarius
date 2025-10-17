@@ -1,7 +1,7 @@
 ﻿using Application.Dto.Request;
 using Application.Dto.Request.Filters;
+using Application.Dto.Response;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -17,7 +17,7 @@ public class BooksController : ControllerBase
     [ProducesResponseType(500)]
     [EndpointDescription("Поиск книг по различным критериям. Поддерживает пагинацию, сортировку и фильтрацию.")]
     [EndpointSummary("Поиск книг")]
-    public IActionResult SearchBooks([FromQuery] BookFilters filter)
+    public async Task<ActionResult<IEnumerable<BookResponse>>> SearchBooks([FromQuery] BookFilters filter)
     {
         // Search books by author, genre, publisher
         return Ok();

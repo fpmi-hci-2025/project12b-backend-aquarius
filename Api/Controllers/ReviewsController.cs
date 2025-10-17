@@ -1,7 +1,7 @@
 ﻿using Application.Dto.Request;
 using Application.Dto.Request.Filters;
+using Application.Dto.Response;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -17,7 +17,7 @@ public class ReviewsController : ControllerBase
     [ProducesResponseType(500)]
     [EndpointDescription("Получение списка отзывов с поддержкой пагинации и фильтрации.")]
     [EndpointSummary("Получить список отзывов")]
-    public IActionResult GetReviews([FromQuery] ReviewFilters filters)
+    public async Task<ActionResult<IEnumerable<ReviewResponse>>> GetReviews([FromQuery] ReviewFilters filters)
     {
         // Get all reviews
         return Ok();
@@ -36,6 +36,8 @@ public class ReviewsController : ControllerBase
     public IActionResult CreateReview([FromBody] CreateReviewRequest request)
     {
         // Create a new review
+
+        // return CreatedAtAction();
         return Ok();
     }
 }
