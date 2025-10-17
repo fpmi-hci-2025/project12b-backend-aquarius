@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace Application.Dto.Request;
 
-public class RefreshDto
+public class RefreshRequest
 {
+    public string RefreshToken { get; set; }
+    public string AccessToken { get; set; }
 }
