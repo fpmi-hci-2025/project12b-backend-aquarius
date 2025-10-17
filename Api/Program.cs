@@ -1,3 +1,4 @@
+using Api.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -15,6 +16,7 @@ public class Program
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
         builder.Services.AddSwaggerGen();
+        builder.Services.ConfigureSwaggerAuth();
 
         var connectionString = Environment.GetEnvironmentVariable("DB_CONN");
         builder.Services.AddDbContext<BookStoreDbContext>(options =>
@@ -30,14 +32,10 @@ public class Program
             context.Database.Migrate();
         }
 
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.MapOpenApi();
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
-
+        app.MapOpenApi();
+        app.UseSwagger();
+        app.UseSwaggerUI();
+        
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
