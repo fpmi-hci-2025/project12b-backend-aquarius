@@ -6,17 +6,12 @@ namespace Persistence;
 
 public class BookStoreDbContext : DbContext
 {
-
-    public DbSet<Author> Authors { get; set; }
     public DbSet<Book> Books { get; set; }
     public DbSet<Cart> Carts { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
-    public DbSet<Genre> Genres { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<Payment> Payments { get; set; }
-    public DbSet<PickupAddress> PickupAddresses { get; set; }
-    public DbSet<Publisher> Publishers { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<User> Users { get; set; }
@@ -45,32 +40,12 @@ public class BookStoreDbContext : DbContext
             .HasForeignKey(c => c.CartId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Book - Publisher (One-to-Many)
-        modelBuilder.Entity<Book>()
-            .HasOne(b => b.Publisher)
-            .WithMany(p => p.Books)
-            .HasForeignKey(b => b.PublisherId)
+        // Book - CartItem (One-to-Many)
+        modelBuilder.Entity<CartItem>()
+            .HasOne(x => x.Book)
+            .WithMany()
+            .HasForeignKey(c => c.BookId)
             .OnDelete(DeleteBehavior.Restrict);
-
-        // Book - Author (Many-to-Many)
-        modelBuilder.Entity<Book>()
-            .HasMany(b => b.Authors)
-            .WithMany(a => a.Books)
-            .UsingEntity<Dictionary<string, object>>(
-                "Book-Author",
-                j => j.HasOne<Author>().WithMany().HasForeignKey("AuthorId"),
-                j => j.HasOne<Book>().WithMany().HasForeignKey("BookId"),
-                j => j.HasKey("BookId", "AuthorId"));
-
-        // Book - Genre (Many-to-Many)
-        modelBuilder.Entity<Book>()
-            .HasMany(b => b.Genres)
-            .WithMany(g => g.Books)
-            .UsingEntity<Dictionary<string, object>>(
-                "Book-Genre",
-                j => j.HasOne<Genre>().WithMany().HasForeignKey("GenreId"),
-                j => j.HasOne<Book>().WithMany().HasForeignKey("BookId"),
-                j => j.HasKey("BookId", "GenreId"));
 
         // Book - Review (One-to-Many)
         modelBuilder.Entity<Review>()
@@ -114,13 +89,6 @@ public class BookStoreDbContext : DbContext
             .HasForeignKey(oi => oi.BookId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Order - ShippingAddress (One-to-Many)
-        modelBuilder.Entity<Order>()
-            .HasOne(o => o.ShippingAddress)
-            .WithMany(x => x.Orders)
-            .HasForeignKey(o => o.ShippingAddressId)
-            .OnDelete(DeleteBehavior.Restrict);
-
         // User - Wishlist (One-to-One)
         modelBuilder.Entity<User>()
             .HasOne(u => u.Wishlist)
@@ -155,7 +123,6 @@ public class BookStoreDbContext : DbContext
                 j => j.HasOne<User>().WithMany().HasForeignKey("UserId"),
                 j => j.HasKey("UserId", "RoleId"));
 
-        // Unique constraints
         modelBuilder.Entity<User>()
             .HasIndex(u => u.Email)
             .IsUnique();
@@ -168,7 +135,6 @@ public class BookStoreDbContext : DbContext
             .HasIndex(p => p.TransactionNumber)
             .IsUnique();
 
-        // Configure decimal precision for Price and Amount
         modelBuilder.Entity<Book>()
             .Property(b => b.Price)
             .HasPrecision(18, 2);
@@ -177,7 +143,6 @@ public class BookStoreDbContext : DbContext
             .Property(p => p.Amount)
             .HasPrecision(18, 2);
 
-        // Configure string lengths
         modelBuilder.Entity<User>()
             .Property(u => u.Email)
             .HasMaxLength(255);
@@ -185,10 +150,6 @@ public class BookStoreDbContext : DbContext
         modelBuilder.Entity<User>()
             .Property(u => u.PasswordHash)
             .HasMaxLength(500);
-
-        modelBuilder.Entity<Book>()
-            .Property(b => b.ISBN)
-            .HasMaxLength(20);
 
         modelBuilder.Entity<Book>()
             .Property(b => b.Title)
@@ -202,26 +163,6 @@ public class BookStoreDbContext : DbContext
             .Property(p => p.PaymentMethod)
             .HasMaxLength(50);
 
-        modelBuilder.Entity<PickupAddress>()
-            .Property(pa => pa.AddressLine1)
-            .HasMaxLength(255);
-
-        modelBuilder.Entity<PickupAddress>()
-            .Property(pa => pa.City)
-            .HasMaxLength(100);
-
-        modelBuilder.Entity<PickupAddress>()
-            .Property(pa => pa.Country)
-            .HasMaxLength(100);
-
-        modelBuilder.Entity<Publisher>()
-            .Property(p => p.Name)
-            .HasMaxLength(255);
-
-        modelBuilder.Entity<Publisher>()
-            .Property(p => p.ContactEmail)
-            .HasMaxLength(255);
-
         modelBuilder.Entity<Role>()
             .Property(r => r.Name)
             .HasMaxLength(50);
@@ -230,25 +171,31 @@ public class BookStoreDbContext : DbContext
             .Property(ut => ut.RefreshToken)
             .HasMaxLength(500);
 
-        // Configure required properties
-        modelBuilder.Entity<Author>()
-            .Property(a => a.FirstName)
-            .IsRequired();
-
-        modelBuilder.Entity<Author>()
-            .Property(a => a.LastName)
-            .IsRequired();
-
         modelBuilder.Entity<Book>()
             .Property(b => b.Title)
             .IsRequired();
 
         modelBuilder.Entity<Book>()
-            .Property(b => b.Price)
+            .Property(b => b.Quantity)
+            .IsRequired()
+            .HasDefaultValue(0);
+
+        modelBuilder.Entity<Book>()
+            .Property(b => b.Publisher)
             .IsRequired();
 
-        modelBuilder.Entity<Genre>()
-            .Property(g => g.Name)
+        modelBuilder.Entity<Book>()
+            .Property(b => b.Authors)
+            .HasColumnType("text[]")
+            .IsRequired();
+
+        modelBuilder.Entity<Book>()
+            .Property(b => b.Genres)
+            .HasColumnType("text[]")
+            .IsRequired();
+
+        modelBuilder.Entity<Book>()
+            .Property(b => b.Price)
             .IsRequired();
 
         modelBuilder.Entity<Order>()
@@ -261,22 +208,6 @@ public class BookStoreDbContext : DbContext
 
         modelBuilder.Entity<Payment>()
             .Property(p => p.Amount)
-            .IsRequired();
-
-        modelBuilder.Entity<PickupAddress>()
-            .Property(pa => pa.AddressLine1)
-            .IsRequired();
-
-        modelBuilder.Entity<PickupAddress>()
-            .Property(pa => pa.City)
-            .IsRequired();
-
-        modelBuilder.Entity<PickupAddress>()
-            .Property(pa => pa.Country)
-            .IsRequired();
-
-        modelBuilder.Entity<Publisher>()
-            .Property(p => p.Name)
             .IsRequired();
 
         modelBuilder.Entity<Review>()

@@ -8,8 +8,8 @@ public class Review : EntityBase
     public string? Comment { get; set; }
 
     public Guid BookId { get; set; }
-    public Book Book { get; set; }
+    public virtual Book Book { get; set; }
 
     public Guid UserId { get; set; }
-    public User User { get; set; }
+    public virtual User User { get; set; }
 }

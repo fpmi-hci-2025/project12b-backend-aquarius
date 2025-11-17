@@ -9,5 +9,5 @@ public class Payment : EntityBase
     public decimal Amount { get; set; }
 
     public Guid OrderId { get; set; }
-    public Order Order { get; set; }
+    public virtual Order Order { get; set; }
 }

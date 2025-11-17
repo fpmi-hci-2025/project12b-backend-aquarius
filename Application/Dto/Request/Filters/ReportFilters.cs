@@ -1,6 +1,6 @@
 ﻿namespace Application.Dto.Request.Filters;
 
-public class ReportFilters : BaseFilter
+public class ReportFilters : Pagination
 {
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }

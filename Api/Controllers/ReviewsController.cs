@@ -1,8 +1,11 @@
-﻿using Application.Dto.Request;
+﻿using Application.Contracts;
+using Application.Dto.Request;
 using Application.Dto.Request.Filters;
 using Application.Dto.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Api.Controllers;
 
@@ -10,6 +13,14 @@ namespace Api.Controllers;
 [ApiController]
 public class ReviewsController : ControllerBase
 {
+    private readonly IReviewService _reviewService;
+
+    public ReviewsController(
+        IReviewService reviewService)
+    {
+        _reviewService = reviewService;
+    }
+
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(200)]
@@ -19,8 +30,9 @@ public class ReviewsController : ControllerBase
     [EndpointSummary("Получить список отзывов")]
     public async Task<ActionResult<IEnumerable<ReviewResponse>>> GetReviews([FromQuery] ReviewFilters filters)
     {
-        // Get all reviews
-        return Ok();
+        var reviews = await _reviewService.GetReviews(filters);
+
+        return Ok(reviews);
     }
 
     [HttpPost]
@@ -33,11 +45,11 @@ public class ReviewsController : ControllerBase
     [ProducesResponseType(500)]
     [EndpointDescription("Создание нового отзыва на книгу. Пользователь может оставить только один отзыв на каждую книгу. Проверяется, что пользователь приобретал данную книгу.")]
     [EndpointSummary("Создать отзыв")]
-    public IActionResult CreateReview([FromBody] CreateReviewRequest request)
+    public async Task<IActionResult> CreateReview([FromBody] CreateReviewRequest request)
     {
-        // Create a new review
+        var userId = Guid.Parse(HttpContext.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
+        await _reviewService.CreateReview(userId, request);
 
-        // return CreatedAtAction();
         return Ok();
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Application.Dto.Request.Filters;
 
-public class BookFilters : BaseFilter
+public class BookFilters : Pagination
 {
     public string? Title { get; set; }
     public string? AuthorName { get; set; }
@@ -13,5 +13,5 @@ public class BookFilters : BaseFilter
     public int? MinPageCount { get; set; }
     public int? MaxPageCount { get; set; }
     public bool? InStock { get; set; }
-    public decimal? MinRating { get; set; }
+    public double? MinRating { get; set; }
 }

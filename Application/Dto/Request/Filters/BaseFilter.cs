@@ -1,6 +1,6 @@
 ﻿namespace Application.Dto.Request.Filters;
 
-public abstract class BaseFilter
+public class Pagination
 {
     private int _pageNumber = 1;
     private int _pageSize = 10;
@@ -17,6 +17,4 @@ public abstract class BaseFilter
         get => _pageSize;
         set => _pageSize = value > MaxPageSize ? MaxPageSize : value < 1 ? 1 : value;
     }
-
-    public bool SortDescending { get; set; } = false;
 }
