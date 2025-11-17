@@ -33,6 +33,12 @@ public static class ExceptionHandlingExtensions
                 Detail = ex.Message
             });
 
+            options.Map<ForbiddenException>(ex => new ProblemDetails
+            {
+                Status = StatusCodes.Status403Forbidden,
+                Detail = ex.Message
+            });
+
             options.Map<Exception>(ex => new ProblemDetails
             {
                 Status = StatusCodes.Status500InternalServerError,

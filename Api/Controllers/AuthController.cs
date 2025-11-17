@@ -5,6 +5,7 @@ using Infrastructure.Auth.Options;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace Api.Controllers;
@@ -14,17 +15,11 @@ namespace Api.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IAuthenticationService _authService;
-    private readonly IOptions<RefreshTokenOptions> _refreshTokenOptions;
-    private readonly IOptions<AccessTokenOptions> _accessTokenOptions;
 
     public AuthController(
-        IAuthenticationService authService,
-        IOptions<AccessTokenOptions> accessTokenOptions,
-        IOptions<RefreshTokenOptions> refreshTokenOptions)
+        IAuthenticationService authService)
     {
         _authService = authService;
-        _accessTokenOptions = accessTokenOptions;
-        _refreshTokenOptions = refreshTokenOptions;
     }
 
     [AllowAnonymous]
@@ -37,9 +32,8 @@ public class AuthController : ControllerBase
     public async Task<ActionResult> SignUp([FromBody] RegisterRequest registerDto)
     {
         var tokens = await _authService.RegisterAsync(registerDto);
-        SetTokensInCookies(tokens);
 
-        return Ok();
+        return Ok(tokens);
     }
 
     [AllowAnonymous]
@@ -53,9 +47,8 @@ public class AuthController : ControllerBase
     public async Task<ActionResult> SignIn([FromBody] LoginRequest loginDto)
     {
         var tokens = await _authService.LoginAsync(loginDto);
-        SetTokensInCookies(tokens);
 
-        return Ok();
+        return Ok(tokens);
     }
 
     [Authorize]
@@ -69,17 +62,9 @@ public class AuthController : ControllerBase
     [EndpointSummary("Выход из системы")]
     public async Task<ActionResult> Signout()
     {
-        var email = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+        var userId = HttpContext.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
 
-        if (email == null)
-        {
-            return BadRequest("Token contains no email claims");
-        }
-
-        await _authService.LogoutAsync(new LogoutRequest { Email = email });
-
-        Response.Cookies.Delete("accessToken");
-        Response.Cookies.Delete("refreshToken");
+        await _authService.LogoutAsync(new LogoutRequest { UserId = userId });
 
         return Ok();
     }
@@ -96,30 +81,6 @@ public class AuthController : ControllerBase
     {
         var tokens = await _authService.RefreshAsync(tokensToRefresh);
 
-        SetTokensInCookies(tokens);
-
-        return Ok();
-    }
-
-    private void SetTokensInCookies(TokensResponse tokens)
-    {
-        var refreshTokenCookieOptions = new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.None,
-            Expires = DateTime.UtcNow.AddHours(_refreshTokenOptions.Value.ExpirationTimeHours)
-        };
-
-        var accessTokenCookieOptions = new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.None,
-            Expires = DateTime.UtcNow.AddMinutes(_accessTokenOptions.Value.ExpirationTimeMinutes)
-        };
-
-        Response.Cookies.Append("accessToken", tokens.AccessToken, accessTokenCookieOptions);
-        Response.Cookies.Append("refreshToken", tokens.RefreshToken, refreshTokenCookieOptions);
+        return Ok(tokens);
     }
 }

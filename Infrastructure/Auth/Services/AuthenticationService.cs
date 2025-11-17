@@ -1,6 +1,7 @@
 ﻿using Application.Dto.Request;
 using Application.Dto.Response;
 using Application.Exceptions;
+using Domain.Entities;
 using Entities;
 using Infrastructure.Auth.Contracts;
 using Infrastructure.Auth.Options;
@@ -64,11 +65,11 @@ public class AuthenticationService : IAuthenticationService
     {
         var user = await _dbContext.Users
             .Include(x => x.Tokens)
-            .FirstOrDefaultAsync(x => x.Email == logoutRequest.Email);
+            .FirstOrDefaultAsync(x => x.Id.ToString() == logoutRequest.UserId);
 
         if (user == null)
         {
-            throw new NotFoundException("User with given email wasn't found");
+            throw new NotFoundException("User wasn't found");
         }
 
         user.Tokens.RefreshToken = null;
@@ -136,8 +137,9 @@ public class AuthenticationService : IAuthenticationService
             PasswordHash = BCrypt.Net.BCrypt.EnhancedHashPassword(registerRequest.PasswordHash),
             Phone = registerRequest.Phone,
             DateOfBirth = registerRequest.DateOfBirth,
-            Roles = [],
             Tokens = new UserTokens(),
+            Cart = new Cart(),
+            Wishlist = new Wishlist(),
         };
 
         var userRole = await _dbContext.Roles.Include(x => x.Users).FirstAsync(x => x.Name == "User");

@@ -5,6 +5,6 @@ namespace Entities;
 public class Wishlist : EntityBase
 {
     public Guid UserId { get; set; }
-    public User User { get; set; }
-    public ICollection<Book>? Books { get; set; }
+    public virtual User User { get; set; }
+    public virtual ICollection<Book>? Books { get; set; } = [];
 }

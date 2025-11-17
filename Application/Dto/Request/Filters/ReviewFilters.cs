@@ -1,9 +1,8 @@
 ﻿namespace Application.Dto.Request.Filters;
 
-public class ReviewFilters : BaseFilter
+public class ReviewFilters : Pagination
 {
-    public Guid? BookId { get; set; }
-    public Guid? UserId { get; set; }
+    public Guid BookId { get; set; }
     public DateTime? CreatedAtFrom { get; set; }
     public DateTime? CreatedAtTo { get; set; }
 }

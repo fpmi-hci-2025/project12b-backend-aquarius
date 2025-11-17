@@ -72,7 +72,6 @@ public static class JwtExtensions
                         return Task.CompletedTask;
                     }
 
-                    context.Token = context.Request.Cookies["accessToken"];
                     return Task.CompletedTask;
                 }
             };

@@ -71,10 +71,15 @@ public class TokenService : ITokenService
     {
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Email, user.Email)
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
         };
 
-        var roles = (await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == user.Email))?.Roles;
+        var roles = (await _dbContext.Users
+            .Include(x => x.Roles)
+            .FirstOrDefaultAsync(x => x.Email == user.Email)
+            )?.Roles;
+
         if (roles != null)
         {
             foreach (var role in roles)
