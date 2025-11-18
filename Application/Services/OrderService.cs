@@ -89,7 +89,7 @@ public class OrderService : IOrderService
 
         foreach (var item in request.OrderItems)
         {
-            var userCartItem = userCart.CartItems?.FirstOrDefault(x => x.BookId != item.BookId);
+            var userCartItem = userCart.CartItems?.FirstOrDefault(x => x.BookId == item.BookId);
             if (userCart == null || userCartItem == null)
             {
                 throw new BadRequestException($"Book {item.BookId} was not found in cart of user {userId}");

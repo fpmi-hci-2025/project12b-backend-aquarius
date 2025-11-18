@@ -22,9 +22,11 @@ public class ReviewService : IReviewService
 
     public ReviewService(
         IRepository<Review> reviewRepository,
+        IRepository<Order> orderRepository,
         IMapper mapper)
     {
         _reviewRepository = reviewRepository;
+        _orderRepository = orderRepository;
         _mapper = mapper;
     }
 
