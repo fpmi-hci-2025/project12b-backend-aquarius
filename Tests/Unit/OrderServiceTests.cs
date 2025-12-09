@@ -79,9 +79,9 @@ public class OrderServiceTests
         var bookId = Guid.NewGuid();
         var request = new CreateOrderRequest
         {
-            OrderItems = new List<(Guid BookId, int Count)>
+            OrderItems = new List<CreateOrderRequest.OrderItem>
                 {
-                    new (bookId, 2)
+                    new CreateOrderRequest.OrderItem { BookId = bookId, Count = 2 }
                 },
             CustomerNotes = "Handle with care",
             DeliveryAddress = "123 Main St"
