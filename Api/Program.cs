@@ -66,13 +66,13 @@ public class Program
 
         await DbInitializer.Initialize(app);
 
+
+        app.UseHttpsRedirection();
         app.UseCors("AllowAll");
         app.UseProblemDetails();
         app.MapOpenApi();
         app.UseSwagger();
         app.UseSwaggerUI();
-
-        app.UseHttpsRedirection();
 
         app.UseAuthentication();
         app.UseAuthorization();
