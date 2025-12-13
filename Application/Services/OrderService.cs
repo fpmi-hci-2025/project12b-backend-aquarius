@@ -178,11 +178,11 @@ public class OrderService : IOrderService
         order.Payment = payment;
         order.Status = "Paid";
 
-        await _orderRepository.UpdateAsync(order);
-        await _orderRepository.SaveChangesAsync();
-
         await _paymentRepository.AddAsync(payment);
         await _paymentRepository.SaveChangesAsync();
+
+        await _orderRepository.UpdateAsync(order);
+        await _orderRepository.SaveChangesAsync();
     }
 
     public async Task CancelOrderAsync(Guid orderId, Guid userId)

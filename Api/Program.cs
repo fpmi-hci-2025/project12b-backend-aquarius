@@ -27,6 +27,17 @@ public class Program
         builder.Services.AddSwaggerGen();
         builder.Services.ConfigureSwaggerAuth();
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAll",
+                policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+        });
+
         builder.Services.AddAuth(builder.Configuration);
 
         var connectionString = Environment.GetEnvironmentVariable("DB_CONN");
@@ -55,6 +66,7 @@ public class Program
 
         await DbInitializer.Initialize(app);
 
+        app.UseCors("AllowAll");
         app.UseProblemDetails();
         app.MapOpenApi();
         app.UseSwagger();
