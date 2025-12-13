@@ -29,11 +29,11 @@ public class AuthController : ControllerBase
     [ProducesResponseType(500)]
     [EndpointDescription("Регистрация нового пользователя в системе. Создает учетную запись пользователя с ролью 'User'. Устанавливает JWT токены.")]
     [EndpointSummary("Регистрация нового пользователя")]
-    public async Task<ActionResult> SignUp([FromBody] RegisterRequest registerDto)
+    public async Task<ActionResult<ExtendedTokensResponse>> SignUp([FromBody] RegisterRequest registerDto)
     {
-        var tokens = await _authService.RegisterAsync(registerDto);
+        var tokensResponse = await _authService.RegisterAsync(registerDto);
 
-        return Ok(tokens);
+        return Ok(tokensResponse);
     }
 
     [AllowAnonymous]
@@ -44,11 +44,11 @@ public class AuthController : ControllerBase
     [ProducesResponseType(500)]
     [EndpointDescription("Аутентификация пользователя в системе. Проверяет учетные данные и устанавливает JWT токены.")]
     [EndpointSummary("Вход в систему")]
-    public async Task<ActionResult> SignIn([FromBody] LoginRequest loginDto)
+    public async Task<ActionResult<ExtendedTokensResponse>> SignIn([FromBody] LoginRequest loginDto)
     {
-        var tokens = await _authService.LoginAsync(loginDto);
+        var tokensResponse = await _authService.LoginAsync(loginDto);
 
-        return Ok(tokens);
+        return Ok(tokensResponse);
     }
 
     [Authorize]
@@ -77,10 +77,10 @@ public class AuthController : ControllerBase
     [ProducesResponseType(500)]
     [EndpointDescription("Обновление JWT токенов. Использует валидный refresh token для получения новой пары access и refresh токенов.")]
     [EndpointSummary("Обновление токенов")]
-    public async Task<ActionResult> Refresh([FromBody] RefreshRequest tokensToRefresh)
+    public async Task<ActionResult<TokensResponse>> Refresh([FromBody] RefreshRequest tokensToRefresh)
     {
-        var tokens = await _authService.RefreshAsync(tokensToRefresh);
+        var tokensResponse = await _authService.RefreshAsync(tokensToRefresh);
 
-        return Ok(tokens);
+        return Ok(tokensResponse);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Application.Dto.Request;
 using Application.Dto.Response;
 using Application.Exceptions;
+using AutoMapper;
 using Domain.Entities;
 using Entities;
 using Infrastructure.Auth.Contracts;
@@ -24,18 +25,21 @@ public class AuthenticationService : IAuthenticationService
     private readonly BookStoreDbContext _dbContext;
     private readonly ITokenService _tokenService;
     private readonly IOptions<RefreshTokenOptions> _refreshTokenOptions;
+    private readonly IMapper _mapper;
 
     public AuthenticationService(
         BookStoreDbContext dbContext,
         ITokenService tokenService,
-        IOptions<RefreshTokenOptions> refreshTokenOptions)
+        IOptions<RefreshTokenOptions> refreshTokenOptions,
+        IMapper mapper)
     {
         _dbContext = dbContext;
         _tokenService = tokenService;
         _refreshTokenOptions = refreshTokenOptions;
+        _mapper = mapper;
     }
 
-    public async Task<TokensResponse> LoginAsync(LoginRequest loginRequest)
+    public async Task<ExtendedTokensResponse> LoginAsync(LoginRequest loginRequest)
     {
         var user = await _dbContext.Users
             .Include(x => x.Tokens)
@@ -58,7 +62,14 @@ public class AuthenticationService : IAuthenticationService
         user.Tokens.RefreshTokenExpirationDate = DateTime.UtcNow.AddHours(_refreshTokenOptions.Value.ExpirationTimeHours);
         await _dbContext.SaveChangesAsync();
 
-        return new TokensResponse { AccessToken = accessToken, RefreshToken = refreshToken };
+        var response = new ExtendedTokensResponse
+        {
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
+            UserDetails = _mapper.Map<UserDetails>(user)
+        };
+
+        return response;
     }
 
     public async Task LogoutAsync(LogoutRequest logoutRequest)
@@ -117,10 +128,16 @@ public class AuthenticationService : IAuthenticationService
 
         await _dbContext.SaveChangesAsync();
 
-        return new TokensResponse { AccessToken = newAccessToken, RefreshToken = newRefreshToken };
+        var response = new TokensResponse
+        {
+            AccessToken = newAccessToken,
+            RefreshToken = newRefreshToken,
+        };
+
+        return response;
     }
 
-    public async Task<TokensResponse> RegisterAsync(RegisterRequest registerRequest)
+    public async Task<ExtendedTokensResponse> RegisterAsync(RegisterRequest registerRequest)
     {
         var existingUser = _dbContext.Users.FirstOrDefault(x => x.Email == registerRequest.Email);
         if (existingUser != null)
@@ -155,6 +172,13 @@ public class AuthenticationService : IAuthenticationService
         await _dbContext.Users.AddAsync(user);
         await _dbContext.SaveChangesAsync();
 
-        return new TokensResponse { AccessToken = accessToken, RefreshToken = refreshToken };
+        var response = new ExtendedTokensResponse
+        {
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
+            UserDetails = _mapper.Map<UserDetails>(user)
+        };
+
+        return response;
     }
 }

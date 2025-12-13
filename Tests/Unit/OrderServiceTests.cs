@@ -126,7 +126,6 @@ public class OrderServiceTests
         var orderId = Guid.NewGuid();
         var request = new PaymentRequest
         {
-            OrderId = orderId,
             Amount = 20.0m,
             PaymentMethod = "CreditCard"
         };
@@ -149,7 +148,7 @@ public class OrderServiceTests
         _mockPaymentRepository.Setup(x => x.SaveChangesAsync()).Returns(Task.FromResult(1));
 
         // Act
-        await _orderService.PayOrderAsync(userId, request);
+        await _orderService.PayOrderAsync(userId, orderId, request);
 
         // Assert
         Assert.Equal("Paid", order.Status);
