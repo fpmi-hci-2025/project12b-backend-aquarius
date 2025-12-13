@@ -102,7 +102,7 @@ public class OrdersController : ControllerBase
     {
         var userId = Guid.Parse(HttpContext.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
 
-        await _orderService.PayOrderAsync(userId, request);
+        await _orderService.PayOrderAsync(userId, orderId, request);
 
         return Ok();
     }

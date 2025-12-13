@@ -143,18 +143,18 @@ public class OrderService : IOrderService
         await _orderRepository.SaveChangesAsync();
     }
 
-    public async Task PayOrderAsync(Guid userId, PaymentRequest request)
+    public async Task PayOrderAsync(Guid userId, Guid orderId, PaymentRequest request)
     {
-        var order = await _orderRepository.GetByIdAsync(request.OrderId);
+        var order = await _orderRepository.GetByIdAsync(orderId);
 
         if (order == null)
         {
-            throw new NotFoundException($"Order {request.OrderId} was not found");
+            throw new NotFoundException($"Order {orderId} was not found");
         }
 
         if (order.UserId != userId)
         {
-            throw new ForbiddenException($"Order {request.OrderId} doesn't belong to user {userId}");
+            throw new ForbiddenException($"Order {orderId} doesn't belong to user {userId}");
         }
 
         if (order.Status != "Pending")
@@ -169,7 +169,7 @@ public class OrderService : IOrderService
 
         var payment = new Payment
         {
-            OrderId = request.OrderId,
+            OrderId = orderId,
             Amount = request.Amount,
             PaymentMethod = request.PaymentMethod,
             TransactionNumber = Guid.NewGuid().ToString()

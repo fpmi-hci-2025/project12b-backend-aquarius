@@ -5,8 +5,8 @@ namespace Infrastructure.Auth.Contracts;
 
 public interface IAuthenticationService
 {
-    Task<TokensResponse> LoginAsync(LoginRequest loginRequest);
-    Task<TokensResponse> RegisterAsync(RegisterRequest registerRequest);
+    Task<ExtendedTokensResponse> LoginAsync(LoginRequest loginRequest);
+    Task<ExtendedTokensResponse> RegisterAsync(RegisterRequest registerRequest);
     Task<TokensResponse> RefreshAsync(RefreshRequest refreshRequest);
     Task LogoutAsync(LogoutRequest logoutRequest);
 }
