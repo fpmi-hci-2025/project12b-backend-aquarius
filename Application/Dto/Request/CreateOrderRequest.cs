@@ -2,7 +2,7 @@
 
 public class CreateOrderRequest
 {
-    public string CustomerNotes { get; set; }
+    public string? CustomerNotes { get; set; }
     public string DeliveryAddress { get; set; }
     public List<OrderItem> OrderItems { get; set; }
 

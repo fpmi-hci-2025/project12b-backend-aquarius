@@ -21,6 +21,7 @@ public class OrderServiceTests
     private readonly Mock<IRepository<Payment>> _mockPaymentRepository;
     private readonly Mock<IRepository<Book>> _mockBookRepository;
     private readonly Mock<IRepository<Cart>> _mockCartRepository;
+    private readonly Mock<IRepository<CartItem>> _mockCartItemRepository;
     private readonly Mock<IMapper> _mockMapper;
     private readonly OrderService _orderService;
 
@@ -30,12 +31,14 @@ public class OrderServiceTests
         _mockPaymentRepository = new Mock<IRepository<Payment>>();
         _mockBookRepository = new Mock<IRepository<Book>>();
         _mockCartRepository = new Mock<IRepository<Cart>>();
+        _mockCartItemRepository = new Mock<IRepository<CartItem>>();
         _mockMapper = new Mock<IMapper>();
         _orderService = new OrderService(
             _mockOrderRepository.Object,
             _mockPaymentRepository.Object,
             _mockBookRepository.Object,
             _mockCartRepository.Object,
+            _mockCartItemRepository.Object,
             _mockMapper.Object);
     }
 
