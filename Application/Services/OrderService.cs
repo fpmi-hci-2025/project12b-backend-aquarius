@@ -82,7 +82,7 @@ public class OrderService : IOrderService
         return order.Status;
     }
 
-    public async Task CreateOrderAsync(Guid userId, CreateOrderRequest request)
+    public async Task<OrderResponse> CreateOrderAsync(Guid userId, CreateOrderRequest request)
     {
         decimal totalAmount = 0;
         var orderId = Guid.NewGuid();
@@ -149,6 +149,8 @@ public class OrderService : IOrderService
 
         await _orderRepository.AddAsync(order);
         await _orderRepository.SaveChangesAsync();
+
+        return _mapper.Map<OrderResponse>(order);
     }
 
     public async Task PayOrderAsync(Guid userId, Guid orderId, PaymentRequest request)
