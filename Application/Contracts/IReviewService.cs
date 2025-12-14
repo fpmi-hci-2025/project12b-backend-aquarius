@@ -13,5 +13,5 @@ public interface IReviewService
 {
     Task<IEnumerable<ReviewResponse>> GetReviews(ReviewFilters filters);
 
-    Task CreateReview(Guid userId, CreateReviewRequest request);
+    Task<ReviewResponse> CreateReview(Guid userId, CreateReviewRequest request);
 }

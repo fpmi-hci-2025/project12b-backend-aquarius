@@ -45,11 +45,11 @@ public class ReviewsController : ControllerBase
     [ProducesResponseType(500)]
     [EndpointDescription("Создание нового отзыва на книгу. Пользователь может оставить только один отзыв на каждую книгу. Проверяется, что пользователь приобретал данную книгу.")]
     [EndpointSummary("Создать отзыв")]
-    public async Task<IActionResult> CreateReview([FromBody] CreateReviewRequest request)
+    public async Task<ActionResult<ReviewResponse>> CreateReview([FromBody] CreateReviewRequest request)
     {
         var userId = Guid.Parse(HttpContext.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
-        await _reviewService.CreateReview(userId, request);
+        var result = await _reviewService.CreateReview(userId, request);
 
-        return Ok();
+        return Ok(result);
     }
 }

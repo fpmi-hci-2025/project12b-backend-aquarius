@@ -41,11 +41,11 @@ public class BooksController : ControllerBase
     [ProducesResponseType(500)]
     [EndpointDescription("Создание новой книги в системе. Требует указания обязательных полей.")]
     [EndpointSummary("Создать новую книгу")]
-    public async Task<IActionResult> CreateBook([FromForm] CreateBookRequest request)
+    public async Task<ActionResult<BookResponse>> CreateBook([FromForm] CreateBookRequest request)
     {
-        await _bookService.CreateBook(request);
+        var result = await _bookService.CreateBook(request);
 
-        return Ok();
+        return Ok(result);
     }
 
     [HttpPut("{id}")]
