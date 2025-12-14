@@ -21,6 +21,7 @@ public class OrderService : IOrderService
     private readonly IRepository<Payment> _paymentRepository;
     private readonly IRepository<Book> _bookRepository;
     private readonly IRepository<Cart> _cartRepository;
+    private readonly IRepository<CartItem> _cartItemRepository;
     private readonly IMapper _mapper;
 
     public OrderService(
@@ -28,12 +29,14 @@ public class OrderService : IOrderService
         IRepository<Payment> paymentRepository,
         IRepository<Book> bookRepository,
         IRepository<Cart> cartRepository,
+        IRepository<CartItem> cartItemRepository,
         IMapper mapper)
     {
         _orderRepository = orderRepository;
         _paymentRepository = paymentRepository;
         _bookRepository = bookRepository;
         _cartRepository = cartRepository;
+        _cartItemRepository = cartItemRepository;
         _mapper = mapper;
     }
 
@@ -89,7 +92,7 @@ public class OrderService : IOrderService
 
         foreach (var item in request.OrderItems)
         {
-            var userCartItem = userCart.CartItems?.FirstOrDefault(x => x.BookId == item.BookId);
+            var userCartItem = userCart?.CartItems?.FirstOrDefault(x => x.BookId == item.BookId);
             if (userCart == null || userCartItem == null)
             {
                 throw new BadRequestException($"Book {item.BookId} was not found in cart of user {userId}");
@@ -116,8 +119,7 @@ public class OrderService : IOrderService
 
             if (userCartItem.Quantity == 0)
             {
-                userCart.CartItems.Remove(userCartItem);
-                await _cartRepository.UpdateAsync(userCart);
+                await _cartItemRepository.DeleteAsync(userCartItem);
             }
 
             await _bookRepository.UpdateAsync(book);
