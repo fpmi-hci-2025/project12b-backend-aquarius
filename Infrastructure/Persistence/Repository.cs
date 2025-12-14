@@ -143,7 +143,7 @@ public class Repository<T> : IRepository<T> where T : EntityBase
         if (pageSize < 1) throw new ArgumentException("Page size must be greater than 0", nameof(pageSize));
         if (predicate == null) throw new ArgumentNullException(nameof(predicate));
 
-        IQueryable<T> query = _dbSet.Where(predicate);
+        IQueryable<T> query = _dbSet.Where(predicate).OrderBy(x => x.Id);
 
         return await query
             .Skip((pageNumber - 1) * pageSize)
