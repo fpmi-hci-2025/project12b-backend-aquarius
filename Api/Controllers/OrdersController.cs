@@ -79,13 +79,13 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(500)]
     [EndpointDescription("Создает новый заказ на основе товаров в корзине пользователя. После создания заказа корзина очищается.")]
     [EndpointSummary("Создать новый заказ")]
-    public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest request)
+    public async Task<ActionResult<OrderResponse>> CreateOrder([FromBody] CreateOrderRequest request)
     {
         var userId = Guid.Parse(HttpContext.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
 
-        await _orderService.CreateOrderAsync(userId, request);
+        var result = await _orderService.CreateOrderAsync(userId, request);
 
-        return Ok();
+        return Ok(result);
     }
 
     [HttpPost("{orderId}/pay")]

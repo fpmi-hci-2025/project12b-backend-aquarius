@@ -14,7 +14,7 @@ public interface IBookService
 {
     Task<IEnumerable<BookResponse>> GetBooks(BookFilters filters);
 
-    Task CreateBook(CreateBookRequest request);
+    Task<BookResponse> CreateBook(CreateBookRequest request);
 
     Task UpdateBook(Guid id, UpdateBookRequest request);
 }

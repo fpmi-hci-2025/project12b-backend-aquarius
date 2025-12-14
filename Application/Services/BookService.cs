@@ -22,7 +22,7 @@ public class BookService : IBookService
         _mapper = mapper;
     }
 
-    public async Task CreateBook(CreateBookRequest request)
+    public async Task<BookResponse> CreateBook(CreateBookRequest request)
     {
         await using var memoryStream = new MemoryStream();
         await request.CoverImage.CopyToAsync(memoryStream);
@@ -33,6 +33,8 @@ public class BookService : IBookService
 
         await _bookRepo.AddAsync(book);
         await _bookRepo.SaveChangesAsync();
+
+        return _mapper.Map<BookResponse>(book);
     }
 
     public async Task<IEnumerable<BookResponse>> GetBooks(BookFilters filters)

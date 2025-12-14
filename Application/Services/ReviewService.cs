@@ -30,7 +30,7 @@ public class ReviewService : IReviewService
         _mapper = mapper;
     }
 
-    public async Task CreateReview(Guid userId, CreateReviewRequest request)
+    public async Task<ReviewResponse> CreateReview(Guid userId, CreateReviewRequest request)
     {
         var userBookOrder = await _orderRepository.FirstOrDefaultAsync(
             x => x.UserId == userId && 
@@ -50,6 +50,8 @@ public class ReviewService : IReviewService
 
         await _reviewRepository.AddAsync(review);
         await _reviewRepository.SaveChangesAsync();
+
+        return _mapper.Map<ReviewResponse>(review);
     }
 
     public async Task<IEnumerable<ReviewResponse>> GetReviews(ReviewFilters filters)
