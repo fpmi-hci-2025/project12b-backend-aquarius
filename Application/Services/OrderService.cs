@@ -95,7 +95,7 @@ public class OrderService : IOrderService
                 throw new BadRequestException($"Book {item.BookId} was not found in cart of user {userId}");
             }
 
-            if (userCartItem.Quantity > item.Count)
+            if (userCartItem.Quantity < item.Count)
             {
                 throw new BadRequestException($"User {userId} has {userCartItem.Quantity} items for book {item.BookId} in cart but {item.Count} in request");
             }
@@ -113,6 +113,12 @@ public class OrderService : IOrderService
 
             book.Quantity -= item.Count;
             userCartItem.Quantity -= item.Count;
+
+            if (userCartItem.Quantity == 0)
+            {
+                userCart.CartItems.Remove(userCartItem);
+                await _cartRepository.UpdateAsync(userCart);
+            }
 
             await _bookRepository.UpdateAsync(book);
 
