@@ -66,7 +66,8 @@ public class CartService : ICartService
                 BookId = x.Id,
                 BookPrice = x.Price,
                 BookTitle = x.Title, 
-                Quantity = quantityMap[x.Id]
+                Quantity = quantityMap[x.Id],
+                Base64CoverImage = Convert.ToBase64String(x.CoverImage)
             });
         var response = new CartResponse { CartItems = cartItemsResponse };
 
